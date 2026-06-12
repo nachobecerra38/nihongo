@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100 text-center">
+
+    <div class="flex justify-between items-center mb-6 text-sm text-slate-400 font-medium">
+        <span id="score-counter">Aciertos: 0</span>
+        <span id="group-tag" class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">Hiragana</span>
+    </div>
+
+    <div class="py-8 my-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+        <div id="character-display" class="text-7xl font-extrabold text-slate-950 select-none animate-pulse">
+            ...
+        </div>
+    </div>
+
+    <form id="game-form" autocomplete="off" class="space-y-4">
+        <div>
+            <label for="user-input"
+                class="block text-left text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Escribe el Romaji (pronunciación):
+            </label>
+            <input type="text" id="user-input" required autofocus
+                class="w-full text-center text-2xl font-bold p-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white focus:outline-none transition uppercase tracking-widest">
+        </div>
+
+        <div id="feedback-message" class="hidden text-sm font-semibold p-3 rounded-xl transition-all"></div>
+
+        <button type="submit"
+            class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-lg transition duration-150">
+            Comprobar
+        </button>
+    </form>
+</div>
+
+<script>
+    let characters = [];
+    let currentCharacter = null;
+    let score = 0;
+
+    // Elements
+    const characterDisplay = document.getElementById('character-display');
+    const userInput = document.getElementById('user-input');
+    const gameForm = document.getElementById('game-form');
+    const feedbackMessage = document.getElementById('feedback-message');
+    const scoreCounter = document.getElementById('score-counter');
+
+    // Cargar caracteres desde nuestra API de Flask al iniciar
+    async function loadCharacters() {
+        try {
+            const response = await fetch('/api/characters');
+            characters = await response.json();
+            if (characters.length > 0) {
+                characterDisplay.classList.remove('animate-pulse');
+                nextQuestion();
+            } else {
+                characterDisplay.innerText = "Error: Sin datos";
+            }
+        } catch (error) {
+            console.error("Error fetching characters:", error);
+            characterDisplay.innerText = "❌";
+        }
+    }
+
+    // Seleccionar un carácter aleatorio
+    function nextQuestion() {
+        userInput.value = '';
+        feedbackMessage.className = 'hidden text-sm font-semibold p-3 rounded-xl'; // Reset feedback
+
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        currentCharacter = characters[randomIndex];
+
+        characterDisplay.innerText = currentCharacter.kana;
+        userInput.focus();
+    }
+
+    // Procesar la respuesta del usuario
+    gameForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const answer = userInput.value.trim().toLowerCase();
+        const correctAnswer = currentCharacter.romaji.toLowerCase();
+
+        if (answer === correctAnswer) {
+            score++;
+            scoreCounter.innerText = `Aciertos: ${score}`;
+
+            // Mostrar feedback de éxito temporalmente
+            feedbackMessage.innerText = "✨ ¡Correcto! ✨";
+            feedbackMessage.className = "text-sm font-semibold p-3 rounded-xl bg-emerald-50 text-emerald-700 block";
+
+            setTimeout(nextQuestion, 1000); // Avanzar en 1 segundo
+        } else {
+            // Mostrar feedback de error sin avanzar para que vuelva a intentar
+            feedbackMessage.innerText = `Incorrecto. ¡Inténtalo de nuevo!`;
+            feedbackMessage.className = "text-sm font-semibold p-3 rounded-xl bg-rose-50 text-rose-700 block";
+            userInput.select(); // Selecciona el texto errado para que sea fácil borrarlo
+        }
+    });
+
+    // Iniciar el juego al cargar la página
+    loadCharacters();
+</script>
+{% endblock %}

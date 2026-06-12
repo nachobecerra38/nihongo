@@ -11,6 +11,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/play")
+def play():
+    return render_template("play.html")
+
+
 # API route to retrieve characters from the database
 @app.route("/api/characters")
 def get_characters():
