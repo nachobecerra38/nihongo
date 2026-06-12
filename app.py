@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from database import get_db_connection
 
 # Flask application initialization
@@ -7,8 +7,8 @@ app = Flask(__name__)
 
 # Main route definition
 @app.route("/")
-def hello_world():
-    return "Hello, World!"
+def index():
+    return render_template("index.html")
 
 
 # API route to retrieve characters from the database
