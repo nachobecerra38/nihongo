@@ -85,3 +85,34 @@ INSERT INTO characters (kana, romaji, group_name, kana_type) VALUES
 ('ラ', 'ra', 'ra', 'katakana'), ('リ', 'ri', 'ra', 'katakana'), ('ル', 'ru', 'ra', 'katakana'), ('レ', 're', 'ra', 'katakana'), ('ロ', 'ro', 'ra', 'katakana'),
 -- W-Group & N
 ('ワ', 'wa', 'wa', 'katakana'), ('ヲ', 'wo', 'wa', 'katakana'), ('ン', 'n', 'n', 'katakana');
+
+-- --- KATAKANA MODIFICADOS (Nigori, kana_type = 'katakana') ---
+-- G-Group
+INSERT INTO characters (kana, romaji, group_name, kana_type) VALUES 
+('ガ', 'ga', 'ga', 'katakana'), ('ギ', 'gi', 'ga', 'katakana'), ('グ', 'gu', 'ga', 'katakana'), ('ゲ', 'ge', 'ga', 'katakana'), ('ゴ', 'go', 'ga', 'katakana'),
+-- Z-Group
+('ザ', 'za', 'za', 'katakana'), ('ジ', 'ji', 'za', 'katakana'), ('ズ', 'zu', 'za', 'katakana'), ('ゼ', 'ze', 'za', 'katakana'), ('ゾ', 'zo', 'za', 'katakana'),
+-- D-Group
+('ダ', 'da', 'da', 'katakana'), ('ヂ', 'ji', 'da', 'katakana'), ('ヅ', 'zu', 'da', 'katakana'), ('デ', 'de', 'da', 'katakana'), ('ド', 'do', 'da', 'katakana'),
+-- B-Group
+('バ', 'ba', 'ba', 'katakana'), ('ビ', 'bi', 'ba', 'katakana'), ('ブ', 'bu', 'ba', 'katakana'), ('ベ', 'be', 'ba', 'katakana'), ('ボ', 'bo', 'ba', 'katakana'),
+-- P-Group
+('パ', 'pa', 'pa', 'katakana'), ('ピ', 'pi', 'pa', 'katakana'), ('プ', 'pu', 'pa', 'katakana'), ('ペ', 'pe', 'pa', 'katakana'), ('ポ', 'po', 'pa', 'katakana');
+
+-- --- KATAKANA DIPTONGOS (Yōon, kana_type = 'katakana') ---
+-- K & G
+INSERT INTO characters (kana, romaji, group_name, kana_type) VALUES 
+('キャ', 'kya', 'yoon', 'katakana'), ('キュ', 'kyu', 'yoon', 'katakana'), ('キョ', 'kyo', 'yoon', 'katakana'),
+('ギャ', 'gya', 'yoon', 'katakana'), ('ギュ', 'gyu', 'yoon', 'katakana'), ('ギョ', 'gyo', 'yoon', 'katakana'),
+-- S & Z
+('シャ', 'sha', 'yoon', 'katakana'), ('シュ', 'shu', 'yoon', 'katakana'), ('ショ', 'sho', 'yoon', 'katakana'),
+('ジャ', 'ja', 'yoon', 'katakana'), ('ジュ', 'ju', 'yoon', 'katakana'), ('ジョ', 'jo', 'yoon', 'katakana'),
+-- T
+('チャ', 'cha', 'yoon', 'katakana'), ('チュ', 'chu', 'yoon', 'katakana'), ('チョ', 'cho', 'yoon', 'katakana'),
+-- N, M, R
+('ニャ', 'nya', 'yoon', 'katakana'), ('ニュ', 'nyu', 'yoon', 'katakana'), ('ニョ', 'nyo', 'yoon', 'katakana'),
+('ミャ', 'mya', 'yoon', 'katakana'), ('ミュ', 'myu', 'yoon', 'katakana'), ('ミョ', 'myo', 'yoon', 'katakana'),
+('リャ', 'rya', 'yoon', 'katakana'), ('リュ', 'ryu', 'yoon', 'katakana'), ('リョ', 'ryo', 'yoon', 'katakana'),
+-- B & P
+('ビャ', 'bya', 'yoon', 'katakana'), ('ビュ', 'byu', 'yoon', 'katakana'), ('ビョ', 'byo', 'yoon', 'katakana'),
+('ピャ', 'pya', 'yoon', 'katakana'), ('ピュ', 'pyu', 'yoon', 'katakana'), ('ピョ', 'pyo', 'yoon', 'katakana');
