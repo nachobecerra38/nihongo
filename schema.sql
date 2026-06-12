@@ -26,9 +26,38 @@ INSERT INTO characters (kana, romaji, group_name) VALUES
 ('は', 'ha', 'ha'), ('ひ', 'hi', 'ha'), ('ふ', 'fu', 'ha'), ('へ', 'he', 'ha'), ('ほ', 'ho', 'ha'),
 -- M-Group
 ('ま', 'ma', 'ma'), ('み', 'mi', 'ma'), ('む', 'mu', 'ma'), ('め', 'me', 'ma'), ('も', 'mo', 'ma'),
--- Y-Group (Only 3 characters)
+-- Y-Group
 ('や', 'ya', 'ya'), ('ゆ', 'yu', 'ya'), ('よ', 'yo', 'ya'),
 -- R-Group
 ('ら', 'ra', 'ra'), ('り', 'ri', 'ra'), ('る', 'ru', 'ra'), ('れ', 're', 'ra'), ('ろ', 'ro', 'ra'),
--- W-Group & Singular N (3 characters)
-('わ', 'wa', 'wa'), ('を', 'wo', 'wa'), ('ん', 'n', 'n');
+-- W-Group & Singular N
+('わ', 'wa', 'wa'), ('を', 'wo', 'wa'), ('ん', 'n', 'n'),
+
+-- --- DAKUTEN & HANDAKUTEN (Nigori) ---
+-- G-Group (From K)
+('が', 'ga', 'ga'), ('ぎ', 'gi', 'ga'), ('ぐ', 'gu', 'ga'), ('げ', 'ge', 'ga'), ('ご', 'go', 'ga'),
+-- Z-Group (From S)
+('ざ', 'za', 'za'), ('じ', 'ji', 'za'), ('ず', 'zu', 'za'), ('ぜ', 'ze', 'za'), ('ぞ', 'zo', 'za'),
+-- D-Group (From T)
+('だ', 'da', 'da'), ('ぢ', 'ji', 'da'), ('づ', 'zu', 'da'), ('で', 'de', 'da'), ('ど', 'do', 'da'),
+-- B-Group (From H)
+('ば', 'ba', 'ba'), ('び', 'bi', 'ba'), ('ぶ', 'bu', 'ba'), ('べ', 'be', 'ba'), ('ぼ', 'bo', 'ba'),
+-- P-Group (Handakuten - From H)
+('ぱ', 'pa', 'pa'), ('ぴ', 'pi', 'pa'), ('ぷ', 'pu', 'pa'), ('ぺ', 'pe', 'pa'), ('ぽ', 'po', 'pa'),
+
+-- --- YOON (Diphthongs) ---
+-- K & G
+('きゃ', 'kya', 'yoon'), ('きゅ', 'kyu', 'yoon'), ('きょ', 'kyo', 'yoon'),
+('ぎゃ', 'gya', 'yoon'), ('ぎゅ', 'gyu', 'yoon'), ('ぎょ', 'gyo', 'yoon'),
+-- S & Z
+('しゃ', 'sha', 'yoon'), ('しゅ', 'shu', 'yoon'), ('しょ', 'sho', 'yoon'),
+('じゃ', 'ja', 'yoon'), ('じゅ', 'ju', 'yoon'), ('じょ', 'jo', 'yoon'),
+-- T
+('ちゃ', 'cha', 'yoon'), ('ちゅ', 'chu', 'yoon'), ('ちょ', 'cho', 'yoon'),
+-- N, M, R
+('にゃ', 'nya', 'yoon'), ('にゅ', 'nyu', 'yoon'), ('にょ', 'nyo', 'yoon'),
+('みゃ', 'mya', 'yoon'), ('みゅ', 'myu', 'yoon'), ('みょ', 'myo', 'yoon'),
+('りゃ', 'rya', 'yoon'), ('りゅ', 'ryu', 'yoon'), ('りょ', 'ryo', 'yoon'),
+-- B & P
+('びゃ', 'bya', 'yoon'), ('びゅ', 'byu', 'yoon'), ('びょ', 'byo', 'yoon'),
+('ぴゃ', 'pya', 'yoon'), ('ぴゅ', 'pyu', 'yoon'), ('ぴょ', 'pyo', 'yoon');
