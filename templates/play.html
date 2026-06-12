@@ -48,8 +48,18 @@
     // Cargar caracteres desde nuestra API de Flask al iniciar
     async function loadCharacters() {
         try {
-            const response = await fetch('/api/characters');
+            // 1. Obtener los parámetros de la URL actual
+            const urlParams = new URLSearchParams(window.location.search);
+            const group = urlParams.get('group') || 'all';
+
+            // 2. Actualizar la etiqueta visual del grupo en la interfaz
+            const groupTag = document.getElementById('group-tag');
+            groupTag.innerText = `Grupo: ${group.toUpperCase()}`;
+
+            // 3. Hacer la petición a la API incluyendo el grupo elegido
+            const response = await fetch(`/api/characters?group=${group}`);
             characters = await response.json();
+
             if (characters.length > 0) {
                 characterDisplay.classList.remove('animate-pulse');
                 nextQuestion();
