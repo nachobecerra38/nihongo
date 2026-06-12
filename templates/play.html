@@ -38,7 +38,7 @@
     let currentCharacter = null;
     let score = 0;
 
-    // Nombre clave para guardar los errores en el navegador de forma persistente
+    // Key for localStorage to track failed characters 
     const STORAGE_KEY = 'hiragana_failed_characters';
 
     // Elements
@@ -48,8 +48,7 @@
     const feedbackMessage = document.getElementById('feedback-message');
     const scoreCounter = document.getElementById('score-counter');
 
-    // --- FUNCIONES DE ALMACENAMIENTO (Manejo de errores) ---
-
+    // Functions to manage failed characters in localStorage
     function getFailedIds() {
         const stored = localStorage.getItem(STORAGE_KEY);
         return stored ? JSON.parse(stored) : [];
@@ -69,19 +68,19 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(failedIds));
     }
 
-    // --- LÓGICA DEL JUEGO ---
+    // Load characters from the server based on URL parameters
     async function loadCharacters() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
             const group = urlParams.get('group') || 'all';
-            // CAPTURAMOS EL TIPO DE ALFABETO (Por defecto 'hiragana')
+            // Character type (hiragana, katakana, etc.)
             const type = urlParams.get('type') || 'hiragana';
 
-            // Actualizamos la etiqueta superior para mostrar Grupo + Tipo
+            // Update group/type tag in the UI
             const groupTag = document.getElementById('group-tag');
             groupTag.innerText = `${type.toUpperCase()} - ${group.toUpperCase()}`;
 
-            // Hacemos el fetch enviando AMBOS parámetros a Flask
+            // Fetch characters from the API
             const response = await fetch(`/api/characters?group=${group}&type=${type}`);
             characters = await response.json();
 
@@ -97,27 +96,24 @@
         }
     }
 
-    // SELECCIÓN INTELIGENTE DE CARACTERES
+    // Load the next character, with a bias towards previously failed ones
     function nextQuestion() {
         userInput.value = '';
         feedbackMessage.className = 'hidden text-sm font-semibold p-3 rounded-xl';
 
         const failedIds = getFailedIds();
 
-        // Filtramos cuáles de los caracteres cargados están actualmente en la lista de fallos
+        // Create a pool of previously failed characters
         const poolOfFailures = characters.filter(c => failedIds.includes(c.id));
 
         let chosenCharacter = null;
 
-        // Si hay errores registrados, tiramos un dado (0 a 1). 
-        // Si sale menor a 0.30 (30% de probabilidad), forzamos un caracter de la lista de errores.
+        // 30% chance of selecting from the pool of failures, if there are any
         if (poolOfFailures.length > 0 && Math.random() < 0.30) {
             const randomIndex = Math.floor(Math.random() * poolOfFailures.length);
             chosenCharacter = poolOfFailures[randomIndex];
-            // Marcamos visualmente (opcional) que es un repaso poniendo el tag sutil
             document.getElementById('group-tag').innerText = "🔄 REPASO DE ERROR";
         } else {
-            // 30% restante, o si no hay errores guardados: Selección 100% aleatoria general
             const randomIndex = Math.floor(Math.random() * characters.length);
             chosenCharacter = characters[randomIndex];
 
@@ -125,7 +121,7 @@
             document.getElementById('group-tag').innerText = `Grupo: ${(urlParams.get('group') || 'all').toUpperCase()}`;
         }
 
-        // Para evitar que salga exactamente el mismo caracter dos veces seguidas (si hay más opciones)
+        // Avoid repeating the same character consecutively if there are multiple characters available
         if (currentCharacter && chosenCharacter.id === currentCharacter.id && characters.length > 1) {
             return nextQuestion();
         }
@@ -135,14 +131,14 @@
         userInput.focus();
     }
 
-    // EVALUACIÓN DE RESPUESTA OPTIMIZADA PARA REPETICIÓN ESPACIADA
+    // Handle form submission and answer checking
     gameForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const answer = userInput.value.trim().toLowerCase();
         const correctAnswer = currentCharacter.romaji.toLowerCase();
 
-        // Deshabilitar el botón y el input momentáneamente para evitar doble envío durante el feedback
+        // Disable input and button to prevent multiple submissions while feedback is shown
         userInput.disabled = true;
         const submitBtn = gameForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
@@ -151,7 +147,7 @@
             score++;
             scoreCounter.innerText = `Aciertos: ${score}`;
 
-            // Si estaba en la lista de errores y acertó, lo removemos
+            // Remove the character from the list of failed characters if it was previously marked as failed
             removeFailedId(currentCharacter.id);
 
             feedbackMessage.innerText = "✨ ¡Correcto! ✨";
@@ -161,26 +157,26 @@
                 userInput.disabled = false;
                 submitBtn.disabled = false;
                 nextQuestion();
-            }, 1000); // 1 segundo de feedback antes de avanzar
+            }, 1000); // 
 
         } else {
-            // ¡Punto clave!: Si se equivocó, lo registramos para que reaparezca LUEGO
+            // Add the character to the list of failed characters in localStorage
             addFailedId(currentCharacter.id);
 
-            // Le mostramos la respuesta correcta para que aprenda del error
+            // Show the correct answer and mark the input as incorrect
             feedbackMessage.innerText = `Incorrecto. El romaji correcto era: "${correctAnswer}"`;
             feedbackMessage.className = "text-sm font-semibold p-3 rounded-xl bg-rose-50 text-rose-700 block";
 
-            // Avanzamos a un caracter NUEVO después de 3 segundos (para que le dé tiempo a leer)
+            // Wait a bit longer before moving to the next question to give the user time to read the feedback
             setTimeout(() => {
                 userInput.disabled = false;
                 submitBtn.disabled = false;
-                nextQuestion(); // <--- ¡Ahora sí avanzamos!
+                nextQuestion();
             }, 3000);
         }
     });
 
-    // Iniciar el juego
+    // Initial load of characters when the page is ready
     loadCharacters();
 </script>
 {% endblock %}

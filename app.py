@@ -19,14 +19,17 @@ def play():
 # API route to retrieve characters from the database
 @app.route("/api/characters")
 def get_characters():
+
+    # Get the selected group from the query parameters
     selected_group = request.args.get("group")
-    # Nuevo parámetro: 'hiragana' o 'katakana' (por defecto será hiragana si no mandan nada)
+
+    # Default to "hiragana" if no type is specified
     kana_type = request.args.get("type", "hiragana")
 
     connection = get_db_connection()
     rows = []
 
-    # 1. Definimos las listas de subgrupos que corresponden a cada categoría
+    # Define the character groups for basics and modified characters
     basics_groups = (
         "vowels",
         "ka",
@@ -42,7 +45,7 @@ def get_characters():
     )
     modified_groups = ("ga", "za", "da", "ba", "pa")
 
-    # 2. Construimos las consultas inyectando el filtro de group_name Y el de kana_type
+    # Build the SQL query based on the selected group
     if selected_group == "basics":
         query = f"SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ? AND group_name IN {basics_groups}"
         rows = connection.execute(query, (kana_type,)).fetchall()
@@ -56,7 +59,7 @@ def get_characters():
         rows = connection.execute(query, (kana_type,)).fetchall()
 
     else:
-        # Si el grupo es 'all', trae todo el alfabeto pero respetando si es Hiragana o Katakana
+        # If no specific group is selected, return all characters of the specified type
         query = "SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ?"
         rows = connection.execute(query, (kana_type,)).fetchall()
 
