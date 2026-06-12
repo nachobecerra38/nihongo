@@ -20,44 +20,57 @@ def play():
 @app.route("/api/characters")
 def get_characters():
     selected_group = request.args.get("group")
+    # Nuevo parámetro: 'hiragana' o 'katakana' (por defecto será hiragana si no mandan nada)
+    kana_type = request.args.get("type", "hiragana")
 
     connection = get_db_connection()
     rows = []
 
-    # Filtrado por Macro-Grupos
+    # 1. Definimos las listas de subgrupos que corresponden a cada categoría
+    basics_groups = (
+        "vowels",
+        "ka",
+        "sa",
+        "ta",
+        "na",
+        "ha",
+        "ma",
+        "ya",
+        "ra",
+        "wa",
+        "n",
+    )
+    modified_groups = ("ga", "za", "da", "ba", "pa")
+
+    # 2. Construimos las consultas inyectando el filtro de group_name Y el de kana_type
     if selected_group == "basics":
-        # Trae todas las familias básicas juntas
-        query = """SELECT id, kana, romaji, group_name FROM characters 
-                   WHERE group_name IN ('vowels', 'ka', 'sa', 'ta', 'na', 'ha', 'ma', 'ya', 'ra', 'wa', 'n')"""
-        rows = connection.execute(query).fetchall()
+        query = f"SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ? AND group_name IN {basics_groups}"
+        rows = connection.execute(query, (kana_type,)).fetchall()
 
     elif selected_group == "modified":
-        # Trae todos los nigoris juntos (Dakuten y Handakuten)
-        query = "SELECT id, kana, romaji, group_name FROM characters WHERE group_name IN ('ga', 'za', 'da', 'ba', 'pa')"
-        rows = connection.execute(query).fetchall()
+        query = f"SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ? AND group_name IN {modified_groups}"
+        rows = connection.execute(query, (kana_type,)).fetchall()
 
     elif selected_group == "yoon":
-        # Trae los diptongos
-        query = "SELECT id, kana, romaji, group_name FROM characters WHERE group_name = 'yoon'"
-        rows = connection.execute(query).fetchall()
+        query = "SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ? AND group_name = 'yoon'"
+        rows = connection.execute(query, (kana_type,)).fetchall()
 
     else:
-        # 'all' o cualquier otra cosa trae todo el universo de caracteres
-        query = "SELECT id, kana, romaji, group_name FROM characters"
-        rows = connection.execute(query).fetchall()
+        # Si el grupo es 'all', trae todo el alfabeto pero respetando si es Hiragana o Katakana
+        query = "SELECT id, kana, romaji, group_name, kana_type FROM characters WHERE kana_type = ?"
+        rows = connection.execute(query, (kana_type,)).fetchall()
 
     connection.close()
 
     characters_list = []
     for row in rows:
-        characters_list.append(
-            {
-                "id": row["id"],
-                "kana": row["kana"],
-                "romaji": row["romaji"],
-                "group_name": row["group_name"],
-            }
-        )
+        characters_list.append({
+            "id": row["id"],
+            "kana": row["kana"],
+            "romaji": row["romaji"],
+            "group_name": row["group_name"],
+            "kana_type": row["kana_type"],
+        })
 
     return jsonify(characters_list)
 

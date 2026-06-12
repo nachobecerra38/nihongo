@@ -70,16 +70,19 @@
     }
 
     // --- LÓGICA DEL JUEGO ---
-
     async function loadCharacters() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
             const group = urlParams.get('group') || 'all';
+            // CAPTURAMOS EL TIPO DE ALFABETO (Por defecto 'hiragana')
+            const type = urlParams.get('type') || 'hiragana';
 
+            // Actualizamos la etiqueta superior para mostrar Grupo + Tipo
             const groupTag = document.getElementById('group-tag');
-            groupTag.innerText = `Grupo: ${group.toUpperCase()}`;
+            groupTag.innerText = `${type.toUpperCase()} - ${group.toUpperCase()}`;
 
-            const response = await fetch(`/api/characters?group=${group}`);
+            // Hacemos el fetch enviando AMBOS parámetros a Flask
+            const response = await fetch(`/api/characters?group=${group}&type=${type}`);
             characters = await response.json();
 
             if (characters.length > 0) {

@@ -10,7 +10,7 @@ CREATE TABLE characters (
     kana_type TEXT DEFAULT 'hiragana'  -- 'hiragana' or 'katakana'
 );
 
--- Insert full basic Hiragana alphabet (46 core characters)
+-- Insert full Hiragana alphabet with groupings for lessons
 INSERT INTO characters (kana, romaji, group_name) VALUES 
 -- Vowels
 ('あ', 'a', 'vowels'), ('い', 'i', 'vowels'), ('う', 'u', 'vowels'), ('え', 'e', 'vowels'), ('お', 'o', 'vowels'),
@@ -61,3 +61,27 @@ INSERT INTO characters (kana, romaji, group_name) VALUES
 -- B & P
 ('びゃ', 'bya', 'yoon'), ('びゅ', 'byu', 'yoon'), ('びょ', 'byo', 'yoon'),
 ('ぴゃ', 'pya', 'yoon'), ('ぴゅ', 'pyu', 'yoon'), ('ぴょ', 'pyo', 'yoon');
+
+
+-- --- BASIC KATAKANA (46 characters, kana_type = 'katakana') ---
+-- Vowels
+INSERT INTO characters (kana, romaji, group_name, kana_type) VALUES 
+('ア', 'a', 'vowels', 'katakana'), ('イ', 'i', 'vowels', 'katakana'), ('ウ', 'u', 'vowels', 'katakana'), ('エ', 'e', 'vowels', 'katakana'), ('オ', 'o', 'vowels', 'katakana'),
+-- K-Group
+('カ', 'ka', 'ka', 'katakana'), ('キ', 'ki', 'ka', 'katakana'), ('ク', 'ku', 'ka', 'katakana'), ('ケ', 'ke', 'ka', 'katakana'), ('コ', 'ko', 'ka', 'katakana'),
+-- S-Group
+('サ', 'sa', 'sa', 'katakana'), ('シ', 'shi', 'sa', 'katakana'), ('ス', 'su', 'sa', 'katakana'), ('セ', 'se', 'sa', 'katakana'), ('ソ', 'so', 'sa', 'katakana'),
+-- T-Group
+('タ', 'ta', 'ta', 'katakana'), ('チ', 'chi', 'ta', 'katakana'), ('ツ', 'tsu', 'ta', 'katakana'), ('テ', 'te', 'ta', 'katakana'), ('ト', 'to', 'ta', 'katakana'),
+-- N-Group
+('ナ', 'na', 'na', 'katakana'), ('ニ', 'ni', 'na', 'katakana'), ('ヌ', 'nu', 'na', 'katakana'), ('ネ', 'ne', 'na', 'katakana'), ('ノ', 'no', 'na', 'katakana'),
+-- H-Group
+('ハ', 'ha', 'ha', 'katakana'), ('ヒ', 'hi', 'ha', 'katakana'), ('フ', 'fu', 'ha', 'katakana'), ('ヘ', 'he', 'ha', 'katakana'), ('ホ', 'ho', 'ha', 'katakana'),
+-- M-Group
+('マ', 'ma', 'ma', 'katakana'), ('ミ', 'mi', 'ma', 'katakana'), ('ム', 'mu', 'ma', 'katakana'), ('メ', 'me', 'ma', 'katakana'), ('モ', 'mo', 'ma', 'katakana'),
+-- Y-Group
+('ヤ', 'ya', 'ya', 'katakana'), ('ユ', 'yu', 'ya', 'katakana'), ('ヨ', 'yo', 'ya', 'katakana'),
+-- R-Group
+('ラ', 'ra', 'ra', 'katakana'), ('リ', 'ri', 'ra', 'katakana'), ('ル', 'ru', 'ra', 'katakana'), ('レ', 're', 'ra', 'katakana'), ('ロ', 'ro', 'ra', 'katakana'),
+-- W-Group & N
+('ワ', 'wa', 'wa', 'katakana'), ('ヲ', 'wo', 'wa', 'katakana'), ('ン', 'n', 'n', 'katakana');
