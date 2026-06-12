@@ -38,6 +38,9 @@
     let currentCharacter = null;
     let score = 0;
 
+    // Nombre clave para guardar los errores en el navegador de forma persistente
+    const STORAGE_KEY = 'hiragana_failed_characters';
+
     // Elements
     const characterDisplay = document.getElementById('character-display');
     const userInput = document.getElementById('user-input');
@@ -45,18 +48,37 @@
     const feedbackMessage = document.getElementById('feedback-message');
     const scoreCounter = document.getElementById('score-counter');
 
-    // Cargar caracteres desde nuestra API de Flask al iniciar
+    // --- FUNCIONES DE ALMACENAMIENTO (Manejo de errores) ---
+
+    function getFailedIds() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    function addFailedId(id) {
+        let failedIds = getFailedIds();
+        if (!failedIds.includes(id)) {
+            failedIds.push(id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(failedIds));
+        }
+    }
+
+    function removeFailedId(id) {
+        let failedIds = getFailedIds();
+        failedIds = failedIds.filter(failedId => failedId !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(failedIds));
+    }
+
+    // --- LÓGICA DEL JUEGO ---
+
     async function loadCharacters() {
         try {
-            // 1. Obtener los parámetros de la URL actual
             const urlParams = new URLSearchParams(window.location.search);
             const group = urlParams.get('group') || 'all';
 
-            // 2. Actualizar la etiqueta visual del grupo en la interfaz
             const groupTag = document.getElementById('group-tag');
             groupTag.innerText = `Grupo: ${group.toUpperCase()}`;
 
-            // 3. Hacer la petición a la API incluyendo el grupo elegido
             const response = await fetch(`/api/characters?group=${group}`);
             characters = await response.json();
 
@@ -72,43 +94,90 @@
         }
     }
 
-    // Seleccionar un carácter aleatorio
+    // SELECCIÓN INTELIGENTE DE CARACTERES
     function nextQuestion() {
         userInput.value = '';
-        feedbackMessage.className = 'hidden text-sm font-semibold p-3 rounded-xl'; // Reset feedback
+        feedbackMessage.className = 'hidden text-sm font-semibold p-3 rounded-xl';
 
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        currentCharacter = characters[randomIndex];
+        const failedIds = getFailedIds();
 
+        // Filtramos cuáles de los caracteres cargados están actualmente en la lista de fallos
+        const poolOfFailures = characters.filter(c => failedIds.includes(c.id));
+
+        let chosenCharacter = null;
+
+        // Si hay errores registrados, tiramos un dado (0 a 1). 
+        // Si sale menor a 0.30 (30% de probabilidad), forzamos un caracter de la lista de errores.
+        if (poolOfFailures.length > 0 && Math.random() < 0.30) {
+            const randomIndex = Math.floor(Math.random() * poolOfFailures.length);
+            chosenCharacter = poolOfFailures[randomIndex];
+            // Marcamos visualmente (opcional) que es un repaso poniendo el tag sutil
+            document.getElementById('group-tag').innerText = "🔄 REPASO DE ERROR";
+        } else {
+            // 30% restante, o si no hay errores guardados: Selección 100% aleatoria general
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            chosenCharacter = characters[randomIndex];
+
+            const urlParams = new URLSearchParams(window.location.search);
+            document.getElementById('group-tag').innerText = `Grupo: ${(urlParams.get('group') || 'all').toUpperCase()}`;
+        }
+
+        // Para evitar que salga exactamente el mismo caracter dos veces seguidas (si hay más opciones)
+        if (currentCharacter && chosenCharacter.id === currentCharacter.id && characters.length > 1) {
+            return nextQuestion();
+        }
+
+        currentCharacter = chosenCharacter;
         characterDisplay.innerText = currentCharacter.kana;
         userInput.focus();
     }
 
-    // Procesar la respuesta del usuario
+    // EVALUACIÓN DE RESPUESTA OPTIMIZADA PARA REPETICIÓN ESPACIADA
     gameForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const answer = userInput.value.trim().toLowerCase();
         const correctAnswer = currentCharacter.romaji.toLowerCase();
 
+        // Deshabilitar el botón y el input momentáneamente para evitar doble envío durante el feedback
+        userInput.disabled = true;
+        const submitBtn = gameForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
         if (answer === correctAnswer) {
             score++;
             scoreCounter.innerText = `Aciertos: ${score}`;
 
-            // Mostrar feedback de éxito temporalmente
+            // Si estaba en la lista de errores y acertó, lo removemos
+            removeFailedId(currentCharacter.id);
+
             feedbackMessage.innerText = "✨ ¡Correcto! ✨";
             feedbackMessage.className = "text-sm font-semibold p-3 rounded-xl bg-emerald-50 text-emerald-700 block";
 
-            setTimeout(nextQuestion, 1000); // Avanzar en 1 segundo
+            setTimeout(() => {
+                userInput.disabled = false;
+                submitBtn.disabled = false;
+                nextQuestion();
+            }, 1000); // 1 segundo de feedback antes de avanzar
+
         } else {
-            // Mostrar feedback de error sin avanzar para que vuelva a intentar
-            feedbackMessage.innerText = `Incorrecto. ¡Inténtalo de nuevo!`;
+            // ¡Punto clave!: Si se equivocó, lo registramos para que reaparezca LUEGO
+            addFailedId(currentCharacter.id);
+
+            // Le mostramos la respuesta correcta para que aprenda del error
+            feedbackMessage.innerText = `Incorrecto. El romaji correcto era: "${correctAnswer}"`;
             feedbackMessage.className = "text-sm font-semibold p-3 rounded-xl bg-rose-50 text-rose-700 block";
-            userInput.select(); // Selecciona el texto errado para que sea fácil borrarlo
+
+            // Avanzamos a un caracter NUEVO después de 3 segundos (para que le dé tiempo a leer)
+            setTimeout(() => {
+                userInput.disabled = false;
+                submitBtn.disabled = false;
+                nextQuestion(); // <--- ¡Ahora sí avanzamos!
+            }, 3000);
         }
     });
 
-    // Iniciar el juego al cargar la página
+    // Iniciar el juego
     loadCharacters();
 </script>
 {% endblock %}
