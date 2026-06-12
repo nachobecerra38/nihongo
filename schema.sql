@@ -10,10 +10,25 @@ CREATE TABLE characters (
     kana_type TEXT DEFAULT 'hiragana'  -- 'hiragana' or 'katakana'
 );
 
--- Insert initial seed data (The 5 vowels to start testing)
+-- Insert full basic Hiragana alphabet (46 core characters)
 INSERT INTO characters (kana, romaji, group_name) VALUES 
-('あ', 'a', 'vowels'),
-('い', 'i', 'vowels'),
-('う', 'u', 'vowels'),
-('え', 'e', 'vowels'),
-('お', 'o', 'vowels');
+-- Vowels
+('あ', 'a', 'vowels'), ('い', 'i', 'vowels'), ('う', 'u', 'vowels'), ('え', 'e', 'vowels'), ('お', 'o', 'vowels'),
+-- K-Group
+('か', 'ka', 'ka'), ('き', 'ki', 'ka'), ('く', 'ku', 'ka'), ('け', 'ke', 'ka'), ('こ', 'ko', 'ka'),
+-- S-Group
+('さ', 'sa', 'sa'), ('し', 'shi', 'sa'), ('す', 'su', 'sa'), ('せ', 'se', 'sa'), ('そ', 'so', 'sa'),
+-- T-Group
+('た', 'ta', 'ta'), ('ち', 'chi', 'ta'), ('つ', 'tsu', 'ta'), ('て', 'te', 'ta'), ('と', 'to', 'ta'),
+-- N-Group
+('な', 'na', 'na'), ('に', 'ni', 'na'), ('ぬ', 'nu', 'na'), ('ね', 'ne', 'na'), ('の', 'no', 'na'),
+-- H-Group
+('は', 'ha', 'ha'), ('ひ', 'hi', 'ha'), ('ふ', 'fu', 'ha'), ('へ', 'he', 'ha'), ('ほ', 'ho', 'ha'),
+-- M-Group
+('ま', 'ma', 'ma'), ('み', 'mi', 'ma'), ('む', 'mu', 'ma'), ('め', 'me', 'ma'), ('も', 'mo', 'ma'),
+-- Y-Group (Only 3 characters)
+('や', 'ya', 'ya'), ('ゆ', 'yu', 'ya'), ('よ', 'yo', 'ya'),
+-- R-Group
+('ら', 'ra', 'ra'), ('り', 'ri', 'ra'), ('る', 'ru', 'ra'), ('れ', 're', 'ra'), ('ろ', 'ro', 'ra'),
+-- W-Group & Singular N (3 characters)
+('わ', 'wa', 'wa'), ('を', 'wo', 'wa'), ('ん', 'n', 'n');
